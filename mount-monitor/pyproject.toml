@@ -1,0 +1,7 @@
+[project]
+name = "mount-monitor"
+version = "1.0.0"
+description = "Simple unix mount monitor with email notification support."
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = []

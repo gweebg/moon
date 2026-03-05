@@ -1,0 +1,26 @@
+# Mount monitor configuration
+
+[monitor]
+# Where to persist alert state (to enforce the 1-hour throttle)
+state_file = /var/lib/mount_monitor/last
+# Minimum hours between repeated alerts for the same problem
+alert_interval_hours = 1
+# Filesystem types to skip (pseudo/kernel filesystems)
+ignore_fstypes = swap,proc,sysfs,devtmpfs,devpts,tmpfs,cgroup,cgroup2,pstore,debugfs,securityfs,hugetlbfs,mqueue,fusectl,efivarfs
+# Specific mountpoints to always ignore (comma-separated), or "none"
+ignore_mountpoints = none
+
+
+[email]
+enabled = true
+# host configuration
+smtp_host     = mail.domain.com
+smtp_port     = 587
+smtp_use_tls  = true
+# user configuration
+smtp_user     = username
+smtp_password = 'password'
+from_addr     = from@domain.com
+to_addr       = to@domain.com
+# composition settings
+subject_prefix = [Proxmox Mount Alert]
