@@ -239,16 +239,29 @@ def send_email(
 def main():
 
     parser = argparse.ArgumentParser(
-        description="Monitor fstab mounts and alert if any missing."
+        description="Monitor fstab mounts and alert via email if any missing."
     )
 
     parser.add_argument(
-        "--config", default="/etc/mount_monitor.ini", help="Path to config file"
+        "-c",
+        "--config",
+        default="/etc/mount_monitor.ini",
+        help="path to config file",
+        required=False,
     )
     parser.add_argument(
+        "-d",
         "--dry-run",
         action="store_true",
-        help="Check mounts but don't send alerts or update state",
+        help="check mounts but don't send alerts or update state",
+        required=False,
+    )
+    parser.add_argument(
+        "-t",
+        "--test-mail",
+        action="store_true",
+        help="test email deliverability with a test message",
+        required=False,
     )
 
     args = parser.parse_args()
