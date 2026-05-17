@@ -1,0 +1,30 @@
+---
+essential_packages:
+  - vim
+  - curl
+  - wget
+  - net-tools
+  - dnsutils
+  - git
+  - htop
+  - ncdu
+  - unattended-upgrades
+  - qemu-guest-agent
+  - tree
+  - ufw
+  - gnupg2
+
+docker_packages:
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+  - docker-buildx-plugin
+  - docker-compose-plugin
+
+docker_dependencies:
+  - ca-certificates
+  - curl
+  - gnupg
+
+sshd_service: ssh
+sftp_server_path: /usr/lib/openssh/sftp-server

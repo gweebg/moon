@@ -1,0 +1,15 @@
+---
+# Install Docker?
+install_docker: false
+
+# Configure automatic updates?
+auto_updates: false
+
+# Set a custom MOTD message!
+motd_description: ""
+
+# Configure firewall?
+configure_fw: true
+
+# Monitoring server address
+mon_address: 10.0.10.21

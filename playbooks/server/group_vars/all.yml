@@ -1,0 +1,6 @@
+---
+# Install Docker?
+install_docker: false
+
+# Configure automatic updates?
+auto_updates: false

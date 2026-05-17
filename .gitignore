@@ -1,0 +1,3 @@
+# playbook private info
+playbooks/server/inventory/hosts.yml
+playbooks/server/roles/base/files/*.pub

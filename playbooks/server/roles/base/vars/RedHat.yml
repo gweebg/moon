@@ -1,0 +1,27 @@
+---
+essential_packages:
+  - vim
+  - curl
+  - wget
+  - net-tools
+  - bind-utils
+  - git
+  - htop
+  - ncdu
+  - yum-utils
+  - dnf-automatic
+  - qemu-guest-agent
+  - tree
+  - gnupg2
+
+docker_packages:
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+  - docker-buildx-plugin
+  - docker-compose-plugin
+
+docker_repo_url: "https://download.docker.com/linux/centos/docker-ce.repo"
+
+sshd_service: sshd
+sftp_server_path: /usr/libexec/openssh/sftp-server

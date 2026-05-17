@@ -1,0 +1,42 @@
+---
+- name: Configure firewall (RedHat)
+  when:
+    - ansible_os_family == "RedHat"
+    - configure_fw | bool
+  block:
+    - name: Install firewalld
+      ansible.builtin.package:
+        name: firewalld
+        state: present
+
+    - name: Enable and start firewalld
+      ansible.builtin.systemd:
+        name: firewalld
+        enabled: true
+        state: started
+
+- name: Configure firewall (Debian)
+  when:
+    - ansible_os_family == "Debian"
+    - configure_fw | bool
+  block:
+    - name: Install ufw
+      ansible.builtin.package:
+        name: ufw
+        state: present
+
+    - name: Set ufw default incoming policy to deny
+      community.general.ufw:
+        policy: deny
+        direction: incoming
+
+    - name: Allow SSH before enabling ufw
+      community.general.ufw:
+        rules: allow
+        port: "22"
+        proto: tcp
+        comment: "SSH"
+
+    - name: Enable ufw
+      community.general.ufw:
+        state: enabled

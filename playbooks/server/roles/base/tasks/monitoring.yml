@@ -1,0 +1,67 @@
+---
+# TODO: Configure Ping checks on Accord via Prometheus configuration.
+
+# Install Prometheus
+- name: Install Prometheus Node Exporter (RedHat)
+  when: ansible_os_family == "RedHat"
+  ansible.builtin.package:
+    name: node-exporter
+    state: present
+
+- name: Install Prometheus Node Exporter (Debian)
+  when: ansible_os_family == "Debian"
+  ansible.builtin.package:
+    name: prometheus-node-exporter
+    state: present
+
+- name: Configure Node Exporter for disk metrics
+  ansible.builtin.template:
+    src: node-exporter.j2
+    dest: /etc/default/prometheus-node-exporter
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Start and enable the Node Exporter service
+  ansible.builtin.service:
+    name: prometheus-node-exporter
+    state: started
+    enabled: true
+
+# Create FW zone for monitoring
+- name: Configure firewall for node_exporter (RedHat)
+  when: ansible_os_family == "RedHat"
+  block:
+    - name: Create 'monitoring' zone on firewalld
+      ansible.posix.firewalld:
+        zone: monitoring
+        state: present
+        permanent: true
+
+    - name: Reload firewalld to apply new zone
+      ansible.builtin.command: firewall-cmd --reload
+
+    - name: Set source for monitoring zone
+      ansible.posix.firewalld:
+        zone: monitoring
+        source: "{{ mon_address }}"
+        state: enabled
+        permanent: true
+        immediate: true
+
+    - name: Only allow port 9100
+      ansible.posix.firewalld:
+        zone: monitoring
+        port: 9100/tcp
+        state: enabled
+        permanent: true
+        immediate: true
+
+- name: Configure firewall for node_exporter (Debian)
+  when: ansible_os_family == "Debian"
+  community.general.ufw:
+    rule: allow
+    port: "9100"
+    proto: tcp
+    src: "{{ mon_address }}"
+    comment: "node_exporter - monitoring"

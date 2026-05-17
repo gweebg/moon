@@ -1,0 +1,42 @@
+---
+# Install and update base system packages for RHEL-based operating system
+
+- name: Install base packages and update RHEL-based operating system
+  when: ansible_os_family == "RedHat"
+  block:
+    - name: Enable EPEL repository
+      ansible.builtin.dnf:
+        name: epel-release
+        state: present
+
+    - name: Install essential packages
+      ansible.builtin.dnf:
+        name: "{{ essential_packages }}"
+        state: present
+
+    - name: Update all packages
+      ansible.builtin.dnf:
+        name: "*"
+        state: latest
+
+# Install and update base system packages for Debian-based operating system
+
+- name: Install base packages and update Debian-based operating system
+  when: ansible_os_family == "Debian"
+  block:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Install essential packages
+      ansible.builtin.apt:
+        name: "{{ essential_packages }}"
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Update all packages
+      ansible.builtin.apt:
+        upgrade: dist
+        update_cache: true
+      when: ansible_os_family == "Debian"

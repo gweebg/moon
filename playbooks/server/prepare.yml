@@ -1,0 +1,6 @@
+---
+- name: Base VM configuration
+  hosts: all
+  become: true
+  roles:
+    - base

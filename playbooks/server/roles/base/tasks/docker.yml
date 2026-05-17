@@ -1,0 +1,83 @@
+---
+# Don't change anything if already installed
+
+- name: Check if Docker is already installed
+  ansible.builtin.command: docker --version
+  register: docker_installed
+  changed_when: false
+  failed_when: false
+
+# Install Docker on RHEL-based operating systems
+
+- name: Configure Docker on RHEL-based operating system
+  when:
+    - install_docker | bool
+    - ansible_os_family == "RedHat"
+    - docker_installed.rc != 0
+  block:
+    - name: Add the Docker repository
+      ansible.builtin.get_url:
+        url: "{{ docker_repo_url }}"
+        dest: /etc/yum.repos.d/docker-ce.repo
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Install Docker
+      ansible.builtin.dnf:
+        name: "{{ docker_packages }}"
+        state: present
+
+# Install Docker on Debian-based operating systems
+
+- name: Configure Docker on Debian-based operating system
+  when:
+    - install_docker | bool
+    - ansible_os_family == "Debian"
+  block:
+    - name: Install Docker prerequisites
+      ansible.builtin.apt:
+        name: "{{ docker_dependencies }}"
+        state: present
+        update_cache: true
+
+    - name: Create Docker keyring directory
+      ansible.builtin.file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: "0755"
+
+    - name: Download and install Docker GPG key
+      ansible.builtin.shell: |
+        curl -fsSL https://download.docker.com/linux/debian/gpg \
+          | gpg --dearmor -o /etc/apt/keyrings/docker.asc
+        chmod a+r /etc/apt/keyrings/docker.asc
+      args:
+        creates: /etc/apt/keyrings/docker.asc
+
+    - name: Add Docker apt repository
+      ansible.builtin.deb822_repository:
+        name: docker
+        types: deb
+        uris: https://download.docker.com/linux/debian
+        suites: "{{ ansible_distribution_release }}"
+        components: stable
+        signed_by: /etc/apt/keyrings/docker.asc
+        state: present
+
+    - name: Install Docker packages
+      ansible.builtin.apt:
+        name: "{{ docker_packages }}"
+        state: present
+        update_cache: true
+
+# Common tasks
+
+- name: Enable and start Docker service
+  ansible.builtin.service:
+    name: docker
+    state: started
+    enabled: true
+  when:
+    - install_docker | bool
+    - docker_installed.rc != 0

@@ -1,0 +1,16 @@
+all:
+  vars:
+    ansible_user: root
+    ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
+  children:
+    rocky:
+      hosts:
+        rocky-vm-1:
+          ansible_host: rocky-vm-1-address
+          install_docker: true
+          motd_description: "Random Description"
+    debian:
+      hosts:
+        debian-vm-1:
+          ansible_host: debian-vm-1-address
+          install_docker: false

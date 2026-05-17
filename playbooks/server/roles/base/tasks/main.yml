@@ -1,0 +1,40 @@
+---
+- name: Load OS-specific Variables
+  ansible.builtin.include_vars: "{{ ansible_os_family }}.yml"
+  tags: always
+
+- name: Essential Packages
+  ansible.builtin.import_tasks: packages.yml
+  tags: packages
+
+- name: Automatic Updates
+  ansible.builtin.import_tasks: auto_updates.yml
+  tags: auto_updates
+
+- name: SSH Configuration
+  ansible.builtin.import_tasks: ssh.yml
+  tags: ssh
+
+- name: Setup System Firewall
+  ansible.builtin.import_tasks: firewall.yml
+  tags: firewall
+
+- name: Docker
+  ansible.builtin.import_tasks: docker.yml
+  tags: docker
+
+- name: Hostname
+  ansible.builtin.import_tasks: hostname.yml
+  tags: hostname
+
+- name: Bash Prompt and History
+  ansible.builtin.import_tasks: bash.yml
+  tags: bash
+
+- name: Monitoring setup
+  ansible.builtin.import_tasks: monitoring.yml
+  tags: monitoring
+
+- name: QEMU Quest Agent
+  ansible.builtin.import_tasks: qemu.yml
+  tags: qemu

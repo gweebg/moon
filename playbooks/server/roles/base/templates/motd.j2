@@ -1,0 +1,14 @@
+{% set os_info    = "󰴈 " ~ ansible_distribution ~ " " ~ ansible_distribution_version %}
+{% set ip_info    = "󰈀 " ~ ansible_default_ipv4.address %}
+{% set hostname_info = " " ~ ansible_hostname %}
+{% if motd_description is defined and motd_description %}
+{% set desc_lines = " " ~ motd_description %}
+{% else %}
+{% set desc_lines = "" %}
+{% endif %}
+
+{{ os_info }}
+{{ ip_info }}
+{{ hostname_info }}
+{{ desc_lines }}
+{{ '\n' }}

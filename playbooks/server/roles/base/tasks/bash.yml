@@ -1,0 +1,19 @@
+---
+- name: Configure system-wide custom bash prompt
+  ansible.builtin.copy:
+    dest: /etc/profile.d/custom_prompt.sh
+    owner: root
+    group: root
+    mode: "0644"
+    content: |
+      export PROMPT_COMMAND='LAST_EXIT=$?'
+      export PS1='$(c=$(jobs | wc -l); [ "$c" -ne 0 ] && echo "[$c]")[\u@\h][\w][$LAST_EXIT]> '
+
+- name: Configure system-wide custom history time format
+  ansible.builtin.copy:
+    dest: /etc/profile.d/custom_history.sh
+    owner: root
+    group: root
+    mode: "0644"
+    content: |
+      export HISTTIMEFORMAT="%d/%m/%y %T "

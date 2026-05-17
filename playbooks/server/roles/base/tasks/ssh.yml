@@ -1,0 +1,33 @@
+---
+# Harden SSH configuration and setup SSH keys
+
+- name: Configure SSH
+  ansible.builtin.template:
+    src: 90-custom.conf.j2
+    dest: /etc/ssh/sshd_config.d/90-custom.conf
+    owner: root
+    group: root
+    mode: "0600"
+
+- name: Remove weak Diffie-Hellman moduli (< 3072 bit)
+  ansible.builtin.shell: |
+    awk '$5 >= 3071' /etc/ssh/moduli > /etc/ssh/moduli.tmp \
+      && mv /etc/ssh/moduli.tmp /etc/ssh/moduli
+  args:
+    executable: /bin/bash
+  register: moduli_result
+  changed_when: moduli_result.rc == 0
+
+- name: Import trusted SSH public keys
+  ansible.posix.authorized_key:
+    user: "{{ ansible_user }}"
+    state: present
+    key: "{{ lookup('file', item) }}"
+  loop: "{{ lookup('fileglob', 'files/*.pub', wantlist=True) }}"
+  loop_control:
+    label: "{{ item | basename }}"
+
+- name: Restart sshd
+  ansible.builtin.service:
+    name: "{{ sshd_service }}"
+    state: restarted
