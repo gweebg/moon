@@ -1,2 +1,3 @@
-# Ansible Managed
-ARGS='--collector.disable-defaults --collector.filesystem'
+# This configuration is Ansible Managed.
+# Manual editions may be overwritten.
+ARGS='--collector.systemd --collector.systemd.unit-include="(nginx|httpd|postgresql|redis|ssh|docker|postfix|dovecot).service"'
