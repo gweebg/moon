@@ -1,5 +1,4 @@
 ---
-# TODO: Configure Ping checks on Accord via Prometheus configuration.
 
 # Install Prometheus
 - name: Install Prometheus Node Exporter (RedHat)
@@ -25,7 +24,7 @@
 - name: Start and enable the Node Exporter service
   ansible.builtin.service:
     name: prometheus-node-exporter
-    state: started
+    state: restarted
     enabled: true
 
 # Create FW zone for monitoring
