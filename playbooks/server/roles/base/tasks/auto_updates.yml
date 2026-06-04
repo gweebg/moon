@@ -6,16 +6,10 @@
     - auto_updates | bool
     - ansible_os_family == "RedHat"
   block:
-    - name: Create custom scripts directory
-      ansible.builtin.file:
-        path: /etc/scripts
-        state: directory
-        mode: "0755"
-
-    - name: Copy custom notification script to /etc/scripts
+    - name: Copy custom notification script to /usr/local/bin
       ansible.builtin.copy:
         src: automatic-notify.sh
-        dest: /etc/scripts/dnf-automatic-notify.sh
+        dest: /usr/local/bin/dnf-automatic-notify
         mode: "0755"
 
     - name: Configure dnf-automatic

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# v1.0.0
+# v1.1.0
 # dnf-automatic-discord-notify.sh
 # sends dnf-automatic results as a Discord embed with attached report
 

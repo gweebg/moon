@@ -7,27 +7,14 @@ download_updates = yes
 apply_updates = yes
 
 reboot = when-needed
-reboot_command = "shutdown -r $AUTOMATIC_REBOOT_TIME 'Rebooting after applying package updates'"
+reboot_command = "shutdown -r $AUTOMATIC_REBOOT_TIME"
 
 [emitters]
 emit_via = command
 
-# [email]
-# email_from = root@example.com
-# email_to = root
-# email_host = localhost
-# email_port = 25
-# email_tls = no
-
-
 [command]
 stdin_format = "{body}"
-command_format = "/etc/scripts/dnf-automatic-notify.sh"
-
-# [command_email]
-# email_from = root@example.com
-# email_to = root 
-
+command_format = "/usr/local/bin/dnf-automatic-notify"
 
 [base]
 debuglevel = 1⏎  
