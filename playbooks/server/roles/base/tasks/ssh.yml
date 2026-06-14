@@ -3,8 +3,8 @@
 
 - name: Configure SSH
   ansible.builtin.template:
-    src: 90-custom.conf.j2
-    dest: /etc/ssh/sshd_config.d/90-custom.conf
+    src: files/configs/ssh_extra.conf
+    dest: /etc/ssh/sshd_config.d/90-moon.conf
     owner: root
     group: root
     mode: "0600"
@@ -23,7 +23,7 @@
     user: "{{ ansible_user }}"
     state: present
     key: "{{ lookup('file', item) }}"
-  loop: "{{ lookup('fileglob', 'files/*.pub', wantlist=True) }}"
+  loop: "{{ lookup('fileglob', 'files/keys/*.pub', wantlist=True) }}"
   loop_control:
     label: "{{ item | basename }}"
 

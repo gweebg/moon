@@ -1,21 +1,20 @@
 ---
-
 # Install Prometheus
 - name: Install Prometheus Node Exporter (RedHat)
-  when: ansible_os_family == "RedHat"
+  when: ansible_facts["os_family"] == "RedHat"
   ansible.builtin.package:
     name: node-exporter
     state: present
 
 - name: Install Prometheus Node Exporter (Debian)
-  when: ansible_os_family == "Debian"
+  when: ansible_facts["os_family"] == "Debian"
   ansible.builtin.package:
     name: prometheus-node-exporter
     state: present
 
 - name: Configure Node Exporter for disk metrics
   ansible.builtin.template:
-    src: node-exporter.j2
+    src: files/configs/node_exporter.conf
     dest: /etc/default/prometheus-node-exporter
     owner: root
     group: root
@@ -29,7 +28,7 @@
 
 # Create FW zone for monitoring
 - name: Configure firewall for node_exporter (RedHat)
-  when: ansible_os_family == "RedHat"
+  when: ansible_facts["os_family"] == "RedHat"
   block:
     - name: Create 'monitoring' zone on firewalld
       ansible.posix.firewalld:
@@ -57,7 +56,7 @@
         immediate: true
 
 - name: Configure firewall for node_exporter (Debian)
-  when: ansible_os_family == "Debian"
+  when: ansible_facts["os_family"] == "Debian"
   community.general.ufw:
     rule: allow
     port: "9100"

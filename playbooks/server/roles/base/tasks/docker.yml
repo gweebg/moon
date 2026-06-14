@@ -12,7 +12,7 @@
 - name: Configure Docker on RHEL-based operating system
   when:
     - install_docker | bool
-    - ansible_os_family == "RedHat"
+    - ansible_facts["os_family"] == "RedHat"
     - docker_installed.rc != 0
   block:
     - name: Add the Docker repository
@@ -33,7 +33,7 @@
 - name: Configure Docker on Debian-based operating system
   when:
     - install_docker | bool
-    - ansible_os_family == "Debian"
+    - ansible_facts["os_family"] == "Debian"
   block:
     - name: Install Docker prerequisites
       ansible.builtin.apt:

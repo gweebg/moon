@@ -1,7 +1,7 @@
 ---
 - name: Configure firewall (RedHat)
   when:
-    - ansible_os_family == "RedHat"
+    - ansible_facts["os_family"] == "RedHat"
     - configure_fw | bool
   block:
     - name: Install firewalld
@@ -17,7 +17,7 @@
 
 - name: Configure firewall (Debian)
   when:
-    - ansible_os_family == "Debian"
+    - ansible_facts["os_family"] == "Debian"
     - configure_fw | bool
   block:
     - name: Install ufw
