@@ -4,17 +4,23 @@
 - name: Setup automatic updates for RHEL-based operating system
   when:
     - auto_updates | bool
-    - ansible_os_family == "RedHat"
+    - ansible_facts["os_family"] == "RedHat"
   block:
-    - name: Copy custom notification script to /usr/local/bin
+    - name: Copy notification scheduler script to /usr/local/bin/
       ansible.builtin.copy:
-        src: automatic-notify.sh
-        dest: /usr/local/bin/dnf-automatic-notify
+        src: files/scripts/notify-update
+        dest: /usr/local/bin/notify-update
+        mode: "0755"
+
+    - name: Copy notification sender script to /usr/local/bin/
+      ansible.builtin.copy:
+        src: files/scripts/notify-update-send
+        dest: /usr/local/bin/notify-update-send
         mode: "0755"
 
     - name: Configure dnf-automatic
       ansible.builtin.template:
-        src: automatic.conf.j2
+        src: files/configs/dnf_automatic.conf
         dest: /etc/dnf/automatic.conf
         mode: "0644"
 
@@ -31,7 +37,7 @@
         content: |
           [Service]
           Environment="AUTOMATIC_REBOOT_TIME={{ automatic_reboot_time }}"
-          Environment="DISCORD_WEBHOOK={{ discord_webhook }}"
+          Environment="DISCORD_WEBHOOK={{ vault_discord_webhook }}"
 
     - name: Create dnf-automatic.service.d directory
       ansible.builtin.file:
@@ -41,9 +47,9 @@
         group: root
         mode: "0755"
 
-    - name: Deploy dnf-automatic.timer override
+    - name: Deploy dnf-automatic.timer override (change timer to run at 08:00)
       ansible.builtin.template:
-        src: automatic.timer.override.conf.j2
+        src: files/configs/dnf_automatic_override.conf
         dest: /etc/systemd/system/dnf-automatic.timer.d/override.conf
         mode: "0644"
 
@@ -64,4 +70,4 @@
     msg: Not yet implemented!
   when:
     - auto_updates | bool
-    - ansible_os_family == "Debian"
+    - ansible_facts["os_family"] == "Debian"

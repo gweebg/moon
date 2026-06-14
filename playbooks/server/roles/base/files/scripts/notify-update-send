@@ -1,25 +1,21 @@
 #!/usr/bin/env bash
 
-# v1.1.0
-# dnf-automatic-discord-notify.sh
-# sends dnf-automatic results as a Discord embed with attached report
+# /usr/local/bin/notify-update-send
 
-LOG_FILE="/var/log/dnf-discord-notify.log"
+# Reads /run/notify-update/body and /run/systemd/shutdown/scheduled.
+# Sends a discord notification via webhook with update information
+# and reboot information if applicable.
+
+LOG_FILE="/var/log/notify-update.log"
+BODY_FILE="/run/notify-update/body"
 
 log() {
-    message="$(date '+%Y-%m-%d %H:%M:%S') - $1"
-    echo "$message" >> "$LOG_FILE"
-}
-
-create_temp_report() {
-    body_file=$(mktemp /tmp/dnf-report.XX)
-    cat > "$body_file"
-    echo "$body_file"
+    MESSAGE="$(date '+%Y-%m-%d %H:%M:%S') - $1"
+    echo "$MESSAGE" >> "$LOG_FILE"
 }
 
 check_reboot_scheduled() {
     local scheduled_file="/run/systemd/shutdown/scheduled"
-    
     if [[ ! -f "$scheduled_file" ]]; then
         return 1
     fi
@@ -56,7 +52,6 @@ get_os_thumbnail() {
 }
 
 build_json_payload() {
-    
     local host os \
     checked_at color \
     thumbnail_url reboot="$1"
@@ -108,15 +103,14 @@ send_discord() {
     if [[ "$response" -ge 200 && "$response" -lt 300 ]]; then
         log "Discord notification sent successfully."
     else
-        log "Error sending Discord notification, HTTP response: $response"
+        log "Failed sending Discord notification.. HTTP response $response"
     fi
 }
 
 main() {
-    # for os related information
     source /etc/os-release
     
-    local reboot body_file payload
+    local reboot payload
     
     if ts=$(check_reboot_scheduled); then
         reboot="$ts"
@@ -124,12 +118,13 @@ main() {
         reboot="No"
     fi
     
-    body_file=$(create_temp_report)
+    if [[ ! -f "$BODY_FILE" ]]; then
+        log "$BODY_FILE doesn't exist.. existing with code 2"
+        exit 2
+    fi
     
     payload=$(build_json_payload "$reboot")
-    send_discord "$payload" "$body_file" "$DISCORD_WEBHOOK"
-    
-    rm -f "$body_file"
+    send_discord "$payload" "$BODY_FILE" "$DISCORD_WEBHOOK"
 }
 
 main

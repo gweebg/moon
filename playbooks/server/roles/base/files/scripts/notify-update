@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+# /usr/local/bin/notify-update
+
+# What: Takes in dnf-automatic update body from 
+# stdin, stores it in /run/dnf-notify/body, and
+# schedules the execution (now+30s) of the 
+# notification script. 
+
+# Reason: dnf-automatic sends the notification
+# before scheduling the reboot. I base the
+# notification info from /run/systemd/shutdown/scheduled
+# which will be empty at the time this script 
+# executes.
+
+path="/run/notify-update"
+
+mkdir -p "$path"
+cat > "$path/body"
+
+systemd-run --on-active=30 /usr/local/bin/notify-update-send 
