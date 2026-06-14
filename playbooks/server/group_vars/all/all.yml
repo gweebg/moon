@@ -3,4 +3,5 @@
 install_docker: false
 
 # Configure automatic updates?
-auto_updates: false
+auto_updates: true
+automatic_reboot_time: "03:00"
